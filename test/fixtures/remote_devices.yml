@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account_id: 
+  name: MyString
+  unique_id: MyString
+  location_name: MyString
+  latitude: 9.99
+  longitude: 9.99
+
+two:
+  account_id: 
+  name: MyString
+  unique_id: MyString
+  location_name: MyString
+  latitude: 9.99
+  longitude: 9.99
