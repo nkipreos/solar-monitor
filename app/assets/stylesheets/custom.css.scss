@@ -1,2 +1,13 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.jumbotron {
+  margin-top: 30px; 
+}
+
+.custom-alert {
+  right: 300px;
+  left: 300px;
+  position: absolute;
+  z-index: 10;
+}
