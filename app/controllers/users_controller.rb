@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
   def sign_in
-
+    unless session[:user_id].nil?
+      redirect_to '/dashboard/show'
+    end
   end
 
   def create_user

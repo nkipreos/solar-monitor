@@ -13,18 +13,19 @@ Rails.application.routes.draw do
     post 'create' => :create, as: 'create_account'
   end
 
-  scope '/dashboard', controller: :dashboard do
+  scope path: '/dashboard', controller: :dashboard do
     get 'show' => :show, as: 'dashboard_show'
   end
 
-  scope '/streams', controller: :streams do
+  scope path: '/streams', controller: :streams do
     get 'show' => :show, as: 'show_streams'
     get 'new' => :new, as: 'new_stream'
     post 'create' => :create, as: 'create_stream'
   end
 
-  scope 'remote_devices', controller: :remote_devices do
+  scope path: 'remote_devices', controller: :remote_devices do
     post 'create' => :create, as: 'create_remote_device'
   end
+
 
 end
