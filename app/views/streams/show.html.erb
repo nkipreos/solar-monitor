@@ -1,0 +1,60 @@
+<%= render '/partials/navbar' %>
+<div class="container">
+  <% unless @remote_devices.nil? %>
+    <%  @remote_devices.each do |remote_device| %>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><%= remote_device.name %></h3>
+          <h5>Unique ID: <%= remote_device.unique_id %></h5>
+        </div>
+        <div class="panel-body">
+            <% unless remote_device.streams.nil? %>
+              <div class="col-md-3"><b>Stream Name</b></div>
+              <div class="col-md-3"><b>Stream Type</b></div>
+              <div class="col-md-6"><b>Unique ID</b></div>            
+              <% remote_device.streams.each do |stream|%>
+                <div class="col-md-3"><%= stream.name %></div>
+                <div class="col-md-3"><%= stream.stream_type %></div>
+                <div class="col-md-6"><%= stream.unique_id %></div>
+              <% end %>
+            <% end %>
+            <div class="col-md-12">
+            <hr />
+            <%= form_tag( create_stream_path , class: 'form-inline') do %>
+                <div class="form-group">
+                  <input class="form-control" name="stream_name" id="stream_name" placeholder="Stream Name">
+                </div>
+                <div class="form-group">
+                  <input class="form-control" name="stream_type" id="stream_type" placeholder="Stream Type">
+                </div>
+                <div class="form-group">
+                  <%= text_field_tag "remote_device_id", remote_device.id, class: "form-control", style: "display: none" %>
+                </div>
+                <button type="submit" class="btn btn-success">Create</button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <div class="well">
+    <%= form_tag( create_remote_device_path, class: 'form-inline') do %>
+      <div class="form-group">
+        <input class="form-control" id="remote_device_name" name="remote_device_name" placeholder="Remote Device Name">
+      </div>
+      <div class="form-group">
+        <input class="form-control" id="location_name" name="location_name" placeholder="Location Name">
+      </div>
+      <div class="form-group">
+        <input class="form-control" id="latitude" name="latitude" placeholder="Latitude">
+      </div>
+      <div class="form-group">
+        <input class="form-control" id="longitude" name="longitude" placeholder="Longitude">
+      </div>
+      <div class="form-group">
+        <%= text_field_tag "account_id", @current_user.user_account_relations.where(:relation_type => "admin")[0].account.id, class: "form-control", style: "display: none" %>
+      </div>
+      <button type="submit" class="btn btn-success">Create</button>
+    <% end %>
+  </div>
+</div>

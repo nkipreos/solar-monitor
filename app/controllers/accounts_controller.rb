@@ -19,7 +19,7 @@ class AccountsController < ApplicationController
         relation.relation_type = "admin"
         relation.save
         session[:user_id] = user.id
-        redirect_to '/dashboard'
+        redirect_to '/dashboard/show'
       else
         flash[:error] = "Invalid user"
         render '/create'
