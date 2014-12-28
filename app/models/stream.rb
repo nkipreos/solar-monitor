@@ -1,6 +1,6 @@
 class Stream < ActiveRecord::Base
   belongs_to :remote_device
-  has_one :stream_data
+  has_many :stream_data
 
   validates :name, :stream_type, presence: true
 

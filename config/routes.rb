@@ -23,8 +23,12 @@ Rails.application.routes.draw do
     post 'create' => :create, as: 'create_stream'
   end
 
-  scope path: 'remote_devices', controller: :remote_devices do
+  scope path: '/remote_devices', controller: :remote_devices do
     post 'create' => :create, as: 'create_remote_device'
+  end
+
+  scope path: '/api', controller: :data do
+    post 'new_data' => :create
   end
 
 
