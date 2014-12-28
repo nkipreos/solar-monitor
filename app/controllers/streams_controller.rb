@@ -11,7 +11,7 @@ class StreamsController < ApplicationController
 
   def create
     st = Stream.create({:name => params[:stream_name], :stream_type => params[:stream_type], :remote_device_id => params[:remote_device_id]})
-    unless st.errors.nil?
+    unless st.errors.blank?
       flash[:error] = "Error while creating stream"
     end
     redirect_to '/streams/show'
