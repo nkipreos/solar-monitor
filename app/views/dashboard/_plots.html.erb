@@ -1,0 +1,31 @@
+<% @streams.each_with_index do |stream, index| %>
+  <%= content_tag :div , "", id: "chart" + stream.unique_id.to_s %>
+
+
+  <%= javascript_tag do %>
+  var chart = c3.generate({
+      bindto: '<%= "#chart" + stream.unique_id.to_s %>',
+      data: {
+          xFormat: '%Y-%m-%d %H:%M:%S',
+          x: 'x',
+          columns: [
+              <%= raw @data_x[index] %>,
+              <%= raw @data_y[index] %>,
+          ]
+      },
+      axis: {
+          x: {
+              type: 'timeseries',
+              tick: {
+                  format: '%Y-%m-%d %H:%M:%S'
+              }
+          }
+      },
+      zoom: {
+        enabled: true,
+        rescale: true,
+        extent: [1,1000]
+      }
+  });
+  <% end %>
+<% end %>

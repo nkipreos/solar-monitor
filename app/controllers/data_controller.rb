@@ -5,7 +5,7 @@ class DataController < ApplicationController
       raise "Value must be specified" if params[:value].blank?
       remote_device = RemoteDevice.find_by_unique_id(request.headers["REMOTE-DEVICE-ID"])
       stream = Stream.where(:remote_device_id => remote_device.id).find_by_unique_id(request.headers["STREAM-ID"])
-      stream_data = StreamData.create({:value => params[:value], :stream_id => stream.id}) unless stream.blank?
+      stream_data = StreamData.create({:value => params[:value], :stream_id => stream.id, :measured_at => params[:measured_at]}) unless stream.blank?
       response = {
         :status => "ok", 
         :reponse => [
