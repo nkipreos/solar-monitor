@@ -20,7 +20,8 @@ class DashboardController < ApplicationController
       @data_y[index] = []
       @data_x[index] << 'x'
       @data_y[index] << stream.name
-      StreamData.where(:stream_id => stream.id).last(1000).each do |stream_datum|
+      last_data = StreamData.where(:stream_id => stream.id).last.nil? ? Time.now : StreamData.where(:stream_id => stream.id).last.measured_at
+      StreamData.where(:stream_id => stream.id).where(:measured_at => (last_data - 5.days)...last_data).each do |stream_datum|
         @data_x[index] << stream_datum.created_at.strftime("%Y-%m-%d %H:%M:%S")
         @data_y[index] << stream_datum.value
       end
