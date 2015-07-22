@@ -6,7 +6,7 @@ class DataController < ApplicationController
       remote_device = RemoteDevice.find_by_unique_id(request.headers["REMOTE-DEVICE-ID"])
       stream = Stream.where(:remote_device_id => remote_device.id).find_by_unique_id(request.headers["STREAM-ID"])
       last_datum = StreamData.where(:stream_id => stream.id).order('measured_at asc').last
-      if ((last_datum.measured_at - Time.parse(params[:measured_at]).utc()).abs < 60.seconds ) && ((params[:value].to_i - last_datum.value.to_i).abs > 60)
+      if ((last_datum.measured_at - Time.parse(params[:measured_at]).utc()).abs < 60.seconds ) && ((params[:value].to_i - last_datum.value.to_i).abs > 30)
         response = {
           :status => "ok"
         }
