@@ -30,6 +30,8 @@ gem 'mysql2'
 
 gem 'uuid'
 
+gem 'curb'
+
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
