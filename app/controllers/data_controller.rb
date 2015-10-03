@@ -32,27 +32,31 @@ class DataController < ApplicationController
   def index
     base_url = ENV['BASE_URL']
     rd = RemoteDevice.find_by_name(params['message']['text'])
-    text = "*Datos*\n\n"
-    Stream.where(:remote_device_id => rd.id).each do |stream|
-      text << "*" + stream.stream_type + '*: '
-      text << '_' + StreamData.where(:stream_id => stream.id).last['value'].to_s + " - " + StreamData.where(:stream_id => stream.id).last['measured_at'].to_s + "_\n" unless StreamData.where(:stream_id => stream.id).last.nil?
+    unless rd.blank?
+      text = "*Datos*\n\n"
+      Stream.where(:remote_device_id => rd.id).each do |stream|
+        text << "*" + stream.stream_type + '*: '
+        text << '_' + StreamData.where(:stream_id => stream.id).last['value'].to_s + " - " + StreamData.where(:stream_id => stream.id).last['measured_at'].to_s + "_\n" unless StreamData.where(:stream_id => stream.id).last.nil?
+      end
+      response = {
+        location: rd.location_name,
+        latitude: rd.latitude,
+        logitude: rd.longitude
+      }
+      Curl.post(base_url + 'sendLocation', {
+        :chat_id => params['message']['chat']['id'],
+        :latitude => rd.latitude,
+        :longitude => rd.longitude
+        })
+      Curl.post(base_url + 'sendMessage', {
+        :chat_id => params['message']['chat']['id'],
+        :text => text,
+        :parse_mode => 'Markdown'
+        })
+      render json: {'response' => response}
+    else
+      render json: {'response' => 'error'}
     end
-    response = {
-      location: rd.location_name,
-      latitude: rd.latitude,
-      logitude: rd.longitude
-    }
-    Curl.post(base_url + 'sendLocation', {
-      :chat_id => params['message']['chat']['id'],
-      :latitude => rd.latitude,
-      :longitude => rd.longitude
-      })
-    Curl.post(base_url + 'sendMessage', {
-      :chat_id => params['message']['chat']['id'],
-      :text => text,
-      :parse_mode => 'Markdown'
-      })
-    render json: {'response' => response}
   end
 
 end
