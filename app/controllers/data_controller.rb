@@ -43,7 +43,7 @@ class DataController < ApplicationController
     unless rd.blank?
       text = "*Datos*\n\n"
       Stream.where(:remote_device_id => rd.id).each do |stream|
-        text << "*" + stream.stream_type + '*: '
+        text << "*" + stream.name + '*: '
         text << '_' + StreamData.where(:stream_id => stream.id).last['value'].to_s + " - " + StreamData.where(:stream_id => stream.id).last['measured_at'].to_s + "_\n" unless StreamData.where(:stream_id => stream.id).last.nil?
       end
       response = {
