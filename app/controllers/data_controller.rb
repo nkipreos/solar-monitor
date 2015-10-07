@@ -108,12 +108,14 @@ class DataController < ApplicationController
       end
     when '/stream'
       stream_id = params['message']['text'].split(' ')[-1]
-      stream = Stream.where('unique_id like ?', "%#{stream_id}%").last
-      last_datum = StreamData.where(stream.id).last
-      text = "*#{stream.name}:*\n#{last_datum.value}\n#{last_datum.measured_at}"
-      json_data = {"chat_id" => params['message']['chat']['id'],"text" => text, "parse_mode" => "Markdown"}
-      req = Curl.post(base_url + 'sendMessage', json_data.to_json) do |http|
-        http.headers['Content-Type'] = 'application/json'
+      unless Stream.where('unique_id like ?', "%#{stream_id}%").blank?
+        stream = Stream.where('unique_id like ?', "%#{stream_id}%").last
+        last_datum = StreamData.where(stream.id).last
+        text = "*#{stream.name}:*\n#{last_datum.value}\n#{last_datum.measured_at}"
+        json_data = {"chat_id" => params['message']['chat']['id'],"text" => text, "parse_mode" => "Markdown"}
+        req = Curl.post(base_url + 'sendMessage', json_data.to_json) do |http|
+          http.headers['Content-Type'] = 'application/json'
+        end
       end
     end
     render json: {'response' => 'ok'}
