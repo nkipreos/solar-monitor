@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   scope path: '/api', controller: :data do
     post 'new_data' => :create
     post 'telegram' => :index
+    post 'telegram_devices' => :devices
   end
 
 

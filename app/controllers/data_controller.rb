@@ -1,6 +1,6 @@
 class DataController < ApplicationController
 
-  skip_before_filter :authenticate, :only => [:index]
+  skip_before_filter :authenticate, :only => [:index, :devices]
 
   def create
     begin
@@ -65,6 +65,58 @@ class DataController < ApplicationController
     else
       render json: {'response' => 'error'}
     end
+  end
+
+  def devices
+    base_url = (Rails.env == 'development') ? 'https://api.telegram.org/bot123319927:AAHjHrJaPT9rOBqLpusRvIoTxDUIDsvSRA8/' : ENV['BASE_URL']
+    command = params['message']['text'].split(' ')[0]
+    argument_1 = params['message']['text'].split(' ')[1]
+    argument_2 = params['message']['text'].scan(/'([^<>]*)'/imu).flatten[0]
+    case command
+    when '/user'
+      user = User.find_by_username(argument_1)
+      unless user.blank?
+        keyboard = []
+        user.accounts.each do |account|
+          account.remote_devices.each do |rd|
+            keyboard << ["/device #{argument_1} '#{rd.name}'"]
+          end
+        end
+        text = "Elija una dispositivo"
+        json_data = {"chat_id" => params['message']['chat']['id'],"text" => text,"reply_markup" => {"keyboard" => keyboard,"one_time_keyboard" => true}}
+        Curl.post(base_url + 'sendMessage', json_data.to_json) do |http|
+          http.headers['Content-Type'] = 'application/json'
+        end
+      else
+        text = 'User not found'
+      end
+    when '/device'
+      user = User.find_by_username(argument_1)
+      unless user.blank?
+        if user.accounts.map {|x| x.remote_devices.map {|x| x.name}}.flatten.include?(argument_2)
+          remote_device = RemoteDevice.find_by_name(argument_2)
+          keyboard = []
+          remote_device.streams.each do |stream|
+            keyboard << ["/stream #{stream.name} #{stream.unique_id[-5..-1]}"]
+          end
+          text = "Elija una canal"
+          json_data = {"chat_id" => params['message']['chat']['id'],"text" => text,"reply_markup" => {"keyboard" => keyboard,"one_time_keyboard" => true}}
+          req = Curl.post(base_url + 'sendMessage', json_data.to_json) do |http|
+            http.headers['Content-Type'] = 'application/json'
+          end
+        end
+      end
+    when '/stream'
+      stream_id = params['message']['text'].split(' ')[-1]
+      stream = Stream.where('unique_id like ?', "%#{stream_id}%").last
+      last_datum = StreamData.find_by_stream_id(stream.id)
+      text = "*#{stream.name}:*\n#{last_datum.value}\n#{last_datum.measured_at}"
+      json_data = {"chat_id" => params['message']['chat']['id'],"text" => text, "parse_mode" => "Markdown"}
+      req = Curl.post(base_url + 'sendMessage', json_data.to_json) do |http|
+        http.headers['Content-Type'] = 'application/json'
+      end
+    end
+    render json: {'response' => 'ok'}
   end
 
 end
